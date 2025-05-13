@@ -43,7 +43,37 @@
             "destination": "sfsfDest"
           }
         }
+      },
+      "ECTimeOff": {
+        "kind": "odata-v2",
+        "model": "srv/external/ECTimeOff",
+        "[development]": {
+          "credentials": {
+            "requestTimeout": 30000,
+            "url": "https://sandbox.api.sap.com/successfactors/odata/v2",
+            "authentication": "NoAuthentication"
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "sfsfDest"
+          }
+        }
       }
+    },
+    "preview": {
+      "ui5": {
+        "version": "1.97.0",
+        "theme": "sap_horizon"
+      }
+    },
+    "features": {
+      "preserve_computed": true,
+      "kibana_formatter": true,
+      "audit_personal_data": true,
+      "optimized_search": true,
+      "rest_new_adapter": true,
+      "graphql": true
     }
   }
 }

@@ -1,7 +1,11 @@
-namespace my.bookshop;
-
-entity Books {
-  key ID : Integer;
-  title  : String;
-  stock  : Integer;
+namespace jaldb;
+entity LocalTimeAccount {
+  key externalCode : UUID;
+  userId           : String;
+  startDate        : Date;
+  endDate          : Date;
+  createdDate      : Date;
+  lastModifiedDate : Date;
+  bookingStartDate : Date;
+  bookingEndDate   : Date;
 }
