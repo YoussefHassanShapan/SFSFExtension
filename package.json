@@ -26,8 +26,23 @@
   "scripts": {
     "start": "cds-serve"
   },
+  "globals": {
+    "SELECT": true,
+    "INSERT": true,
+    "UPDATE": true,
+    "DELETE": true,
+    "CREATE": true,
+    "DROP": true,
+    "CDL": true,
+    "CQL": true,
+    "CXL": true,
+    "cds": true
+  },
   "cds": {
     "requires": {
+        "db": {
+          "kind": "sql"
+        },
       "ECPersonalInformation": {
         "kind": "odata-v2",
         "model": "srv/external/ECPersonalInformation",

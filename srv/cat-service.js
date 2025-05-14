@@ -3,13 +3,128 @@ module.exports = async (srv) => {
     const ECPersonalInformation = await cds.connect.to('ECPersonalInformation')
     const ECTimeOff = await cds.connect.to('ECTimeOff')
 
-    const { PerPersonal , TimeType,TimeAccount} = srv.entities
+    const { PerPersonal , TimeType,TimeAccount,EmployeeTime } = srv.entities
+    
+  // Shared date formatting function for Edm.DateTime
+  const toODataDate = (val) => {
+    const date = new Date(val);
+    if (isNaN(date.getTime())) {
+        throw new Error(`Invalid date format for ${val}`);
+    }
+    return `/Date(${date.getTime()})/`; // Format as /Date(<ticks>)/, e.g., /Date(1747267200000)/
+};
+
+
+srv.on('CREATE', EmployeeTime, async (req) => {
+    try {
+        const allowedFields = [
+            'externalCode',
+            'userId',
+            'timeType',
+            'startDate',
+            'endDate',
+            'approvalStatus',
+            'quantityInHours',
+             'userIdNav'
+        ];
+        const mandatoryFields = ['externalCode', 'userId', 'timeType', 'startDate', 'endDate'];
+
+        // Create payload with allowed fields
+        const payload = {};
+        for (const field of allowedFields) {
+            if (req.data[field] !== undefined) {
+                payload[field] = req.data[field];
+            }
+        }
+
+        // Validate mandatory fields
+        for (const field of mandatoryFields) {
+            if (!payload[field]) {
+                throw new Error(`Missing mandatory field: ${field}`);
+            }
+        }
+
+        // Add timeTypeNav (required navigation property)
+        payload.timeTypeNav = {
+            externalCode: payload.timeType // Link to TimeType entity
+        };
+
+        // Convert date fields to SuccessFactors format (/Date(<ticks>)/)
+        for (const dateField of ['startDate', 'endDate', 'createdDateTime', 'lastModifiedDateTime']) {
+            if (payload[dateField]) {
+                payload[dateField] = toODataDate(payload[dateField]);
+            }
+        }
+
+        // Set default values for createdBy and lastModifiedBy
+        // payload.createdBy = payload.createdBy || 'admin';
+        // payload.lastModifiedBy = payload.lastModifiedBy || 'admin';
+
+        // Validate navigation properties
+        if (!payload.timeTypeNav.externalCode) {
+            throw new Error('Missing timeTypeNav.externalCode');
+        }
+
+        // Log the payload for debugging
+        console.log('EmployeeTime CREATE payload:', JSON.stringify(payload, null, 2));
+
+        // Send POST request to SuccessFactors
+        const created = await ECTimeOff.tx(req).send({
+            method: 'POST',
+            path: 'EmployeeTime',
+            data: payload,
+            headers: {
+                APIKey: process.env.APIKey
+            }
+        });
+
+        return created;
+    } catch (err) {
+        console.error('CREATE EmployeeTime failed:', {
+            message: err.message,
+            stack: err.stack,
+            response: err.response ? err.response.data : null
+        });
+        req.error(err.response?.status || 500, `Failed to create EmployeeTime: ${err.message}`);
+    }
+});
+    srv.on('READ', EmployeeTime, async (req) => {
+        try {
+            const employeeTimeQuery = {
+                SELECT: req.query.SELECT
+            };
+
+            const employeeTimes = await ECTimeOff.tx(req).send({
+                method: 'POST',
+                query: employeeTimeQuery,
+                headers: {
+                    APIKey: process.env.APIKey
+                }
+            });
+
+            let list = Array.isArray(employeeTimes) ? employeeTimes : [employeeTimes];
+
+            const withExtension = list.map(async (item) => {
+                item.customLabel = null; // Add custom field logic here if needed
+                return item;
+            });
+
+            const result = await Promise.all(withExtension);
+
+            if (req.query.SELECT.count) {
+                result['$count'] = (result.length < 30) ? result.length : 1000;
+            }
+
+            return result;
+        } catch (err) {
+            console.error('Error fetching EmployeeTime:', err.message);
+            req.error(500, `Failed to fetch EmployeeTime: ${err.message}`);
+        }
+    });
+
 
     srv.on(['READ'], PerPersonal, async (req) => {
-        //Work around that's no longer needed in CAP 5.6 and higher
-/*          if (req.query.SELECT.from.ref[0].where){
-            req.query.SELECT.from.ref[0].where[6].val += 'T00:00:00'
-        }  */
+      
         let PerPersonalQuery = SELECT.from(req.query.SELECT.from)
             .limit(req.query.SELECT.limit)
         if (req.query.SELECT.where) {
@@ -81,8 +196,27 @@ module.exports = async (srv) => {
     return timetypesWithExtension;
 });
 
+// CREATE handler for TimeType
+ srv.on('CREATE', TimeType, async (req) => {
+    console.log(req);
+    debugger
+    try {
+      const created = await ECTimeOff.tx(req).send({
+        method: 'POST',
+        path: 'TimeType', 
+        data: req.data,
+        headers: {
+          APIKey: process.env.APIKey
+        }
+      });
+
+      return created;
+    } catch (err) {
+      console.error('CREATE TimeType failed:', err);
+      req.error(500, `Failed to create TimeType: ${err.message}`);
+    }
+  });
  // TimeAccount
- // TimeAccount (Refactored)
  srv.on('READ', TimeAccount, async (req) => {
     try {
         // Create the query payload for TimeAccount (like the others)
@@ -90,7 +224,6 @@ module.exports = async (srv) => {
             SELECT: req.query.SELECT
         };
 
-        // Adjust request to use POST method for external service (if GET isn't supported)
         const timeAccounts = await ECTimeOff.tx(req).send({
             method: 'POST', // Use POST request instead of GET
             query: timeAccountQuery,
@@ -125,6 +258,45 @@ module.exports = async (srv) => {
     
 });
 
-
+srv.on('CREATE', TimeAccount, async (req) => {
+    try {
+      const payload = { ...req.data };
+  
+      const toODataDate = (val) => `/Date(${new Date(val).getTime()})/`;
+  
+      for (const dateField of [
+        'startDate',
+        'endDate',
+        'bookingStartDate',
+        'bookingEndDate',
+        'mdfSystemEffectiveStartDate',
+        'mdfSystemEffectiveEndDate'
+      ]) {
+        if (payload[dateField]) {
+          payload[dateField] = toODataDate(payload[dateField]);
+        }
+      }
+  
+      // also convert nested date fields if needed
+      if (payload.userIdNav?.startDate) {
+        payload.userIdNav.startDate = toODataDate(payload.userIdNav.startDate);
+      }
+  
+      const result = await ECTimeOff.tx(req).send({
+        method: 'POST',
+        path: 'TimeAccount',
+        data: payload,
+        headers: {
+          APIKey: process.env.APIKey
+        }
+      });
+  
+      return result;
+    } catch (err) {
+      console.error('CREATE TimeAccount failed:', err.message);
+      req.error(500, `Failed to create TimeAccount: ${err.message}`);
+    }
+  });
+  
 
 }
