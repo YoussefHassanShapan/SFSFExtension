@@ -46,34 +46,20 @@
       "ECPersonalInformation": {
         "kind": "odata-v2",
         "model": "srv/external/ECPersonalInformation",
-        "[development]": {
-          "credentials": {
-            "requestTimeout": 30000,
-            "url": "https://sandbox.api.sap.com/successfactors/odata/v2",
-            "authentication": "NoAuthentication"
-          }
-        },
-        "[production]": {
-          "credentials": {
-            "destination": "sfsfDest"
-          }
+        "credentials": {
+          "destination": "SFSF",
+          "path": "/odata/v2"
         }
+       
       },
       "ECTimeOff": {
         "kind": "odata-v2",
         "model": "srv/external/ECTimeOff",
-        "[development]": {
-          "credentials": {
-            "requestTimeout": 30000,
-            "url": "https://sandbox.api.sap.com/successfactors/odata/v2",
-            "authentication": "NoAuthentication"
-          }
-        },
-        "[production]": {
-          "credentials": {
-            "destination": "sfsfDest"
-          }
+        "credentials": {
+          "destination": "SFSF",
+          "path": "/odata/v2"
         }
+     
       }
     },
     "preview": {

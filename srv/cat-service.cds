@@ -17,7 +17,9 @@ service CatalogService {
         lastModifiedDateTime,
         createdBy,
         lastModifiedBy,
-        timeTypeNav,
+        timeTypeNav,cancellationWorkflowRequestId,comment,endTime,
+    userIdNav: Association to external.PerPerson on userIdNav.userId = userId,  // ✅ ADD ON condition
+
     };
 
 @cds.persistence: { table, skip: false }
