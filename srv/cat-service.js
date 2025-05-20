@@ -17,47 +17,56 @@ module.exports = async (srv) => {
 
     srv.on('CREATE', EmployeeTime, async (req) => {
         try {
-            const allowedFields = ['externalCode', 'userId', 'timeType', 'startDate', 'endDate']
+            const allowedFields = ['externalCode', 'userId', 'timeType', 'startDate', 'endDate', 'approvalStatus']
             const mandatoryFields = ['externalCode', 'userId', 'timeType', 'startDate', 'endDate']
-
+    
             const payload = {}
-
+    
             for (const field of allowedFields) {
                 if (req.data[field] !== undefined) {
                     payload[field] = req.data[field]
                 }
             }
-
+    
             for (const field of mandatoryFields) {
                 if (!payload[field]) {
                     throw new Error(`Missing mandatory field: ${field}`)
                 }
             }
-
-            // Add navigation properties
-            payload.timeTypeNav = { externalCode: payload.timeType }
-            payload.userIdNav = { userId: payload.userId }
-
+    
             // Format date fields
             for (const dateField of ['startDate', 'endDate']) {
                 if (payload[dateField]) {
                     payload[dateField] = toODataDate(payload[dateField])
                 }
             }
-
+    
+            // Fix navigation properties with __metadata.uri (to reference existing entities, not create them)
+            payload.timeTypeNav = {
+                __metadata: {
+                    uri: `TimeType('${payload.timeType}')`
+                }
+            }
+    
+            payload.userIdNav = {
+                __metadata: {
+                    uri: `User('${payload.userId}')`
+                }
+            }
+    
             const created = await ECTimeOff.tx(req).send({
                 method: 'POST',
                 path: 'EmployeeTime',
                 data: payload
             })
-
+    
             return created
         } catch (err) {
             console.error('CREATE EmployeeTime failed:', err)
             req.error(err.response?.status || 500, `Failed to create EmployeeTime: ${err.message}`)
         }
     })
-
+    
     srv.on('READ', EmployeeTime, async (req) => {
         try {
             const query = { SELECT: req.query.SELECT }
