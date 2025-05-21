@@ -202,4 +202,46 @@ module.exports = async (srv) => {
             req.error(500, `Failed to create TimeAccount: ${err.message}`)
         }
     })
+    srv.on('UPDATE', EmployeeTime, async (req) => {
+        try {
+            const { externalCode, ...updateData } = req.data
+    
+            // Format dates
+            for (const dateField of ['startDate', 'endDate']) {
+                if (updateData[dateField]) {
+                    updateData[dateField] = toODataDate(updateData[dateField])
+                }
+            }
+    
+            // Fix navigation fields
+            if (updateData.timeType) {
+                updateData.timeTypeNav = {
+                    __metadata: {
+                        uri: `TimeType('${updateData.timeType}')`
+                    }
+                }
+            }
+    
+            if (updateData.userId) {
+                updateData.userIdNav = {
+                    __metadata: {
+                        uri: `User('${updateData.userId}')`
+                    }
+                }
+            }
+    
+            const result = await ECTimeOff.tx(req).send({
+                method: 'PUT',  
+                path: `EmployeeTime('${externalCode}')`,
+                data: updateData
+            })
+    
+            return result
+        } catch (err) {
+            console.error('UPDATE EmployeeTime failed:', err)
+            req.error(err.response?.status || 500, `Failed to update EmployeeTime: ${err.message}`)
+        }
+    })
+    
+    
 }
