@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.10.0",
-    "@cap-js/sqlite": "^1",
+    "@cap-js/sqlite": "^1.11.1",
     "@sap/cds-dk": "^8"
   },
   "scripts": {
@@ -40,9 +40,14 @@
   },
   "cds": {
     "requires": {
-        "db": {
-          "kind": "sql"
-        },
+      "db": {
+        "[development]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db.sqlite"
+          }
+        }
+      },
       "ECPersonalInformation": {
         "kind": "odata-v2",
         "model": "srv/external/ECPersonalInformation",
@@ -50,7 +55,6 @@
           "destination": "SFSF",
           "path": "/odata/v2"
         }
-       
       },
       "ECTimeOff": {
         "kind": "odata-v2",
@@ -59,7 +63,6 @@
           "destination": "SFSF",
           "path": "/odata/v2"
         }
-     
       }
     },
     "preview": {

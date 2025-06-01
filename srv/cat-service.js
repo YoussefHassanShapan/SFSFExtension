@@ -1,11 +1,66 @@
 const cds = require('@sap/cds')
-
+  const xlsx = require('xlsx')
+    const fs = require('fs/promises')
+    const path = require('path')
 module.exports = async (srv) => {
     const ECPersonalInformation = await cds.connect.to('ECPersonalInformation')
     const ECTimeOff = await cds.connect.to('ECTimeOff')
 
     const { PerPersonal, TimeType, TimeAccount, EmployeeTime } = srv.entities
-
+  
+    
+    srv.on('uploadExcel', async (req) => {
+        const { filename, data } = req.data
+    
+        const filePath = path.join(__dirname, '..', 'uploads', filename)
+        await fs.writeFile(filePath, Buffer.from(data, 'base64'))
+    
+        const workbook = xlsx.readFile(filePath)
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const rows = xlsx.utils.sheet_to_json(sheet)
+    
+        const results = []
+    
+        for (const row of rows) {
+            try {
+                const payload = {
+                    externalCode: row.externalCode,
+                    userId: row.userId,
+                    timeType: row.timeType,
+                    startDate: `/Date(${new Date(row.startDate).getTime()})/`,
+                    endDate: `/Date(${new Date(row.endDate).getTime()})/`,
+                    approvalStatus: "APPROVED",
+                    timeTypeNav: {
+                        __metadata: { uri: `TimeType('${row.timeType}')` }
+                    },
+                    userIdNav: {
+                        __metadata: { uri: `User('${row.userId}')` }
+                    }
+                }
+    
+                const result = await ECTimeOff.tx(req).send({
+                    method: 'POST',
+                    path: 'EmployeeTime',
+                    data: payload
+                })
+    
+                results.push({ externalCode: row.externalCode, status: 'SUCCESS' })
+            } catch (e) {
+                results.push({ externalCode: row.externalCode, status: 'FAILED', error: e.message })
+            }
+        }
+    
+        return results
+    })
+    srv.on('getEmployeeTimesForCalendar', async (req) => {
+        const query = SELECT.from('CatalogService.EmployeeTime')
+            .columns('userId', 'timeType', 'startDate', 'endDate')
+    
+        const employeeTimes = await ECTimeOff.tx(req).send({ query })
+    
+        return employeeTimes
+    })
+    
     // Util: Format date to OData style
     const toODataDate = (val) => {
         const date = new Date(val)
