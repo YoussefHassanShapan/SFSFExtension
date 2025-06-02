@@ -5,17 +5,17 @@ entity EmployeeTime {
   userId: String;
   timeType: String;
   approvalStatus: String;
-  quantityInHours: Decimal(9,2);
-  quantityInDays: Decimal(9,2);
+  // quantityInHours: Decimal(9,2);
+  // quantityInDays: Decimal(9,2);
   startDate: Date;
   endDate: Date;
-  createdDateTime: DateTime;
-  lastModifiedDateTime: DateTime;
-  createdBy: String;
-  lastModifiedBy: String;
-  cancellationWorkflowRequestId: String;
-  comment: String;
-  endTime: Time;
+  // createdDateTime: DateTime;
+  // lastModifiedDateTime: DateTime;
+  // createdBy: String;
+  // lastModifiedBy: String;
+  // cancellationWorkflowRequestId: String;
+  // comment: String;
+  // endTime: Time;
 
   userIdNav: Association to PerPersonal;
 }

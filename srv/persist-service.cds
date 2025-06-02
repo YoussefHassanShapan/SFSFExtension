@@ -1,5 +1,4 @@
 using {jaldb} from '../db/schema';
-
 service CatalogService {
   entity EmployeeTime as projection on jaldb.EmployeeTime;
   entity PerPersonal as projection on jaldb.PerPersonal;
