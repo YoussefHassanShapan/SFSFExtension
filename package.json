@@ -16,7 +16,10 @@
     "cors": "^2.8.5",
     "express": "^4",
     "express-graphql": "^0.12.0",
-    "graphql": "^16.11.0"
+    "graphql": "^16.11.0",
+    "multer": "^2.0.0",
+    "ui5-cc-spreadsheetimporter": "^2.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.10.0",
@@ -24,7 +27,8 @@
     "@sap/cds-dk": "^8"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "watch-calendar": "cds watch --open calendar/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "globals": {
     "SELECT": true,
@@ -79,5 +83,8 @@
       "rest_new_adapter": true,
       "graphql": true
     }
-  }
+  },
+  "sapux": [
+    "app/calendar"
+  ]
 }

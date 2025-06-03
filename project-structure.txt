@@ -1,0 +1,44 @@
+.
+|-- Jenkinsfile
+|-- README.md
+|-- app
+|   |-- calendar
+|   |   |-- README.md
+|   |   |-- annotations.cds
+|   |   |-- package-lock.json
+|   |   |-- package.json
+|   |   |-- ui5.yaml
+|   |   `-- webapp
+|   `-- services.cds
+|-- app-package.json.hbs
+|-- db
+|   |-- data
+|   |   |-- jaldb-EmployeeTime.csv
+|   |   |-- jaldb-PerPersonal.csv
+|   |   |-- jaldb-TimeAccount.csv
+|   |   `-- jaldb-TimeType.csv
+|   `-- schema.cds
+|-- db.sqlite
+|-- default-env.json
+|-- eslint.config.mjs
+|-- mta.yaml
+|-- package-lock.json
+|-- package.json
+|-- project-structure.txt
+|-- srv
+|   |-- ECPersonalInformation.edmx
+|   |-- ECTimeOff.edmx
+|   |-- cat-service.cds
+|   |-- cat-service.js
+|   |-- external
+|   |   |-- ECPersonalInformation.csn
+|   |   |-- ECPersonalInformation.edmx
+|   |   |-- ECTimeOff.csn
+|   |   `-- ECTimeOff.edmx
+|   |-- persist-service.cds
+|   |-- persist-service.js
+|   `-- server.js
+|-- ui5-deploy.yaml.hbs
+`-- ui5.yaml.hbs
+
+8 directories, 34 files

@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <Dialog id="customDialog" title="Create Employee Time">
+    <content>
+      <VBox id="_IDGenVBox">
+        <Text id="_IDGenText" text="This is your custom dialog view." />
+        <Input id="_IDGenInput" placeholder="Enter something..." />
+      </VBox>
+    </content>
+    <beginButton>
+      <Button id="_IDGenButton1" text="Submit" press=".onSubmitDialog" />
+    </beginButton>
+    <endButton>
+      <Button id="_IDGenButton2" text="Close" press=".onCloseDialog" />
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

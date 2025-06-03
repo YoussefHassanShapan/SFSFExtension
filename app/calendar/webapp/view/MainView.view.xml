@@ -1,0 +1,21 @@
+<mvc:View
+  controllerName="calendar.calendar.controller.UploadExcel"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:unified="sap.ui.unified">
+  
+  <VBox id="_IDGenVBox2" class="sapUiSmallMargin">
+    <unified:FileUploader
+      id="fileUploader"
+      width="0px"
+      change=".onFileChange"
+      fileType="xls,xlsx"
+      tooltip="Upload Excel file"
+      style="Emphasized" />
+    
+    <Button id="_IDGenButton"
+      text="Upload Excel"
+      press=".onUploadPress" />
+  </VBox>
+  
+</mvc:View>

@@ -5,11 +5,35 @@ service CatalogService {
   entity TimeAccount as projection on jaldb.TimeAccount;
   entity TimeType as projection on jaldb.TimeType;
 
-  action uploadExcel(filename: String, data: LargeBinary) returns array of {
-    externalCode: String;
-    status: String;
-    error: String;
-  };
+
+
+// action uploadExcel(
+//    data: LargeBinary @Core.MediaType: 'text/csv'
+//    )
+// returns array of EmployeeTime
+action uploadExcel(
+   data: LargeBinary 
+) returns array of EmployeeTime;
+  // action uploadExcel() returns Boolean;
+
+  
+  action addEmployeeTime(
+    externalCode: String,
+    userId: String,
+    timeType: String,
+    approvalStatus: String,
+    quantityInHours: Decimal(9,2),
+    quantityInDays: Decimal(9,2),
+    startDate: Date,
+    endDate: Date,
+    // createdDateTime: DateTime,
+    // lastModifiedDateTime: DateTime,
+    // createdBy: String,
+    // lastModifiedBy: String,
+    // cancellationWorkflowRequestId: String,
+    // comment: String,
+    // endTime: Time
+  ) returns EmployeeTime;
 }
 
 // @protocol: 'rest'
