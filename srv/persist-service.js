@@ -2,21 +2,13 @@ const cds = require('@sap/cds');
 const multer = require('multer');
 const xlsx = require('xlsx');
 
-const upload = multer({ storage: multer.memoryStorage() });
 module.exports = cds.service.impl(async function () {
   const { EmployeeTime } = this.entities;
 
   this.on('addEmployeeTime', async (req) => {
     console.log("iam herer ..............");
-    
     return await INSERT.into(EmployeeTime).entries(req.data);
   });
-
-  const { Readable } = require('stream');
-  const xlsx = require('xlsx');
-  
-  module.exports = cds.service.impl(async function () {
-    const { EmployeeTime } = this.entities;
   
     this.on('uploadExcel', async (req) => {
       try {
@@ -27,8 +19,8 @@ module.exports = cds.service.impl(async function () {
         const records = xlsx.utils.sheet_to_json(sheet);
     
         console.log("Parsed records:", records); // ✅ See what's being uploaded
-    
-        await cds.tx(req).run(INSERT.into(EmployeeTime).entries(records));
+    debugger
+     var x =   await cds.tx(req).run(INSERT.into(EmployeeTime).entries(records));
     
         // Debug: Fetch all after insert
         const inserted = await cds.tx(req).run(SELECT.from(EmployeeTime));
@@ -43,5 +35,3 @@ module.exports = cds.service.impl(async function () {
     
   });
   
-  
-});

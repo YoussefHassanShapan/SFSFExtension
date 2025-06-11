@@ -127,11 +127,6 @@ annotate service.EmployeeTime with @(
         },
         {
             $Type : 'UI.DataFieldForAction',
-            Action : 'CatalogService.EntityContainer/uploadExcel',
-            Label : 'Upload Excel',
-        },
-        {
-            $Type : 'UI.DataFieldForAction',
             Action : 'CatalogService.EntityContainer/addEmployeeTime',
             Label : 'Create',
         },
@@ -172,12 +167,12 @@ annotate service.EmployeeTime with @(
         Text : 'Table View 1',
     },
 );
-annotate service with {
-    uploadExcel @(
-        Common.Label: 'Browse',
-        Core.OperationAvailable: true
-    );
-};
+// annotate service with {
+//     uploadExcel @(
+//         Common.Label: 'Browse',
+//         Core.OperationAvailable: true
+//     );
+// };
 // annotate service.EmployeeTime with {
 //     userIdNav @Common.ValueList : {
 //         $Type : 'Common.ValueListType',

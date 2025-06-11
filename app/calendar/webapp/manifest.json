@@ -152,10 +152,10 @@
                       "visible": true,
                       "enabled": true,
                       "requiresSelection": false,
-                      "text": "Import",
+                      "text": "Import Excel",
                       "position": {
                         "placement": "Before",
-                        "anchor": "DataFieldForAction::CatalogService.EntityContainer::uploadExcel"
+                        "anchor": "DataFieldForAction::CatalogService.EntityContainer::addEmployeeTime"
                       }
                     }
                   }
