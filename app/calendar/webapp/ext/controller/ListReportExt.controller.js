@@ -1,43 +1,59 @@
 sap.ui.define([
   "sap/ui/core/mvc/ControllerExtension",
   "sap/ui/core/Fragment",
-  "sap/m/MessageBox",
   "sap/m/MessageToast",
-], function (ControllerExtension, Fragment, MessageBox, MessageToast) {
+  "sap/m/MessageBox"
+], function (ControllerExtension, Fragment, MessageToast, MessageBox) {
   "use strict";
 
   return ControllerExtension.extend("calendar.calendar.ext.controller.ListReportExt", {
-    override: {
-      actions: {
-        uploadExcel: async function () {
-          const oFileUploader = new sap.ui.unified.FileUploader({
-            fileType: ["xlsx", "xls"],
-            change: function (oEvent) {
-              const file = oEvent.getParameter("files")[0];
-              const reader = new FileReader();
-              reader.onload = async function (e) {
-                const base64Data = e.target.result.split(",")[1];
+    onUploadExcelPress: async function () {
+      const oView = this.getView();
 
-                try {
-                  const oContext = this.getView().getBindingContext();
-                  const oModel = this.getView().getModel();
-                  const uploadAction = oModel.bindContext("/uploadExcel(...)");
-                  uploadAction.setParameter("data", base64Data);
+      if (!this._pDialog) {
+        this._pDialog = await Fragment.load({
+          name: "calendar.calendar.ext.fragment.UploadExcelButton",
+          controller: this
+        });
+        oView.addDependent(this._pDialog);
+      }
 
-                  const result = await uploadAction.execute();
-                  MessageToast.show("Upload successful");
-                  console.log(result.getObject());
-                } catch (err) {
-                  MessageBox.error("Upload failed: " + err.message);
-                }
-              }.bind(this);
-              reader.readAsDataURL(file);
-            }.bind(this),
-          });
-
-          oFileUploader.openFileDialog();
-        },
-      },
+      this._pDialog.open();
     },
+
+    onFileSelected: function (oEvent) {
+      this._file = oEvent.getParameter("files")[0];
+    },
+
+    onUploadFile: async function () {
+      if (!this._file) {
+        MessageToast.show("No file selected");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64 = e.target.result.split(",")[1];
+        try {
+          const response = await fetch("/odata/v4/catalog/CatalogService.uploadExcel", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ data: base64 })
+          });
+          if (!response.ok) throw new Error(response.statusText);
+          MessageToast.show("Upload successful!");
+        } catch (err) {
+          MessageBox.error("Upload failed: " + err.message);
+        }
+      };
+      reader.readAsDataURL(this._file);
+
+      this._file = null;
+      this._pDialog.close();
+    },
+
+    onCloseUploadDialog: function () {
+      this._pDialog.close();
+    }
   });
 });

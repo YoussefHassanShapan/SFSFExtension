@@ -88,16 +88,6 @@ annotate service.EmployeeTime with @(
                 Label : 'userIdNav_startDate',
                 Value : userIdNav_startDate,
             },
-            {
-                $Type : 'UI.DataFieldForAction',
-                Action : 'CatalogService.EntityContainer/uploadExcel',
-                Label : 'uploadExcel',
-            },
-            {
-                $Type : 'UI.DataFieldForAction',
-                Action : 'CatalogService.EntityContainer/addEmployeeTime',
-                Label : 'addEmployeeTime',
-            },
           
         ],
     },
@@ -182,34 +172,39 @@ annotate service.EmployeeTime with @(
         Text : 'Table View 1',
     },
 );
-
-annotate service.EmployeeTime with {
-    userIdNav @Common.ValueList : {
-        $Type : 'Common.ValueListType',
-        CollectionPath : 'PerPersonal',
-        Parameters : [
-            {
-                $Type : 'Common.ValueListParameterInOut',
-                LocalDataProperty : userIdNav_personIdExternal,
-                ValueListProperty : 'personIdExternal',
-            },
-            {
-                $Type : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty : 'startDate',
-            },
-            {
-                $Type : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty : 'firstName',
-            },
-            {
-                $Type : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty : 'lastName',
-            },
-            {
-                $Type : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty : 'middelName',
-            },
-        ],
-    }
+annotate service with {
+    uploadExcel @(
+        Common.Label: 'Browse',
+        Core.OperationAvailable: true
+    );
 };
+// annotate service.EmployeeTime with {
+//     userIdNav @Common.ValueList : {
+//         $Type : 'Common.ValueListType',
+//         CollectionPath : 'PerPersonal',
+//         Parameters : [
+//             {
+//                 $Type : 'Common.ValueListParameterInOut',
+//                 LocalDataProperty : userIdNav_personIdExternal,
+//                 ValueListProperty : 'personIdExternal',
+//             },
+//             {
+//                 $Type : 'Common.ValueListParameterDisplayOnly',
+//                 ValueListProperty : 'startDate',
+//             },
+//             {
+//                 $Type : 'Common.ValueListParameterDisplayOnly',
+//                 ValueListProperty : 'firstName',
+//             },
+//             {
+//                 $Type : 'Common.ValueListParameterDisplayOnly',
+//                 ValueListProperty : 'lastName',
+//             },
+//             {
+//                 $Type : 'Common.ValueListParameterDisplayOnly',
+//                 ValueListProperty : 'middelName',
+//             },
+//         ],
+//     }
+// };
 

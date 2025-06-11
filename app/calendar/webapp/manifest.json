@@ -49,6 +49,15 @@
           "sap.fe.templates.ListReport.ListReportController": {
             "controllerName": "calendar.calendar.ext.controller.ListReportExt"
           }
+        },
+        "sap.ui.viewExtensions": {
+          "sap.fe.templates.ListReport.view.ListReport": {
+            "AfterListReportToolbar": {
+              "className": "sap.ui.core.Fragment",
+              "fragmentName": "calendar.calendar.ext.fragment.UploadExcelButton",
+              "type": "XML"
+            }
+          }
         }
       }
     },
@@ -60,8 +69,7 @@
         "sap.ui.core": {},
         "sap.fe.templates": {},
         "sap.f": {},
-        "sap.ui.unified": {}   
-
+        "sap.ui.unified": {}
       }
     },
     "contentDensities": {
@@ -137,6 +145,19 @@
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": {
                     "type": "ResponsiveTable"
+                  },
+                  "actions": {
+                    "u": {
+                      "press": ".extension.calendar.calendar.ext.controller.ListReportExt.onUploadExcelPress",
+                      "visible": true,
+                      "enabled": true,
+                      "requiresSelection": false,
+                      "text": "Import",
+                      "position": {
+                        "placement": "Before",
+                        "anchor": "DataFieldForAction::CatalogService.EntityContainer::uploadExcel"
+                      }
+                    }
                   }
                 }
               },
@@ -173,5 +194,3 @@
     "archeType": "transactional"
   }
 }
-
-

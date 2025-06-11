@@ -1,5 +1,5 @@
 <mvc:View
-  controllerName="calendar.calendar.controller.UploadExcel"
+  controllerName="calendar.calendar.controller.ListReportExt"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
   xmlns:unified="sap.ui.unified">
