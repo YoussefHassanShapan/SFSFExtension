@@ -13,7 +13,7 @@ service CatalogService {
 // returns array of EmployeeTime
 action uploadExcel(
    data: LargeBinary 
-) returns array of EmployeeTime;
+) returns EmployeeTime;
   // action uploadExcel() returns Boolean;
 
   

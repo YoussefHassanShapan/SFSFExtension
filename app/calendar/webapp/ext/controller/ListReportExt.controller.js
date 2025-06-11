@@ -22,9 +22,15 @@ sap.ui.define([
     },
 
     onFileSelected: function (oEvent) {
-      this._file = oEvent.getParameter("files")[0];
-    },
-
+      const file = oEvent.getParameter("files")[0];
+      if (file && file.name.endsWith(".xlsx")) {
+        this._file = file;
+      } else {
+        MessageBox.error("Please upload an Excel (.xlsx) file.");
+      }
+    }
+    
+,
     onUploadFile: async function () {
       if (!this._file) {
         MessageToast.show("No file selected");

@@ -12,59 +12,36 @@ module.exports = cds.service.impl(async function () {
     return await INSERT.into(EmployeeTime).entries(req.data);
   });
 
-  this.post('/uploadExcel', upload.single('file'), async (req, res) => {
-    try {
-      const { buffer, originalname } = req.file;
-      const workbook = xlsx.read(buffer, { type: 'buffer' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const records = xlsx.utils.sheet_to_json(sheet);
-
-      const db = await cds.connect.to('db'); // connect to CAP DB
-      const { EmployeeTime } = db.entities;
-
-      const result = [];
-
-      for (const record of records) {
-        try {
-          await INSERT.into(EmployeeTime).entries(record);
-          result.push({ externalCode: record.externalCode || '', status: 'Success', error: '' });
-        } catch (e) {
-          result.push({ externalCode: record.externalCode || '', status: 'Failed', error: e.message });
-        }
+  const { Readable } = require('stream');
+  const xlsx = require('xlsx');
+  
+  module.exports = cds.service.impl(async function () {
+    const { EmployeeTime } = this.entities;
+  
+    this.on('uploadExcel', async (req) => {
+      try {
+        const base64 = req.data.data;
+        const buffer = Buffer.from(base64, 'base64');
+        const workbook = xlsx.read(buffer, { type: 'buffer' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const records = xlsx.utils.sheet_to_json(sheet);
+    
+        console.log("Parsed records:", records); // ✅ See what's being uploaded
+    
+        await cds.tx(req).run(INSERT.into(EmployeeTime).entries(records));
+    
+        // Debug: Fetch all after insert
+        const inserted = await cds.tx(req).run(SELECT.from(EmployeeTime));
+        console.log("Inserted records:", inserted);
+    
+        return records;
+      } catch (err) {
+        console.error('Upload failed:', err.message);
+        req.error(500, 'Failed to process the uploaded file.');
       }
-
-      res.status(200).json(result);
-    } catch (err) {
-      res.status(500).json({ error: 'Upload failed', details: err.message });
-    }
+    });
+    
   });
-  this.on('uploadExcel', async (req) => {
-console.log(".....................");
-
-try {
-  const { buffer, originalname } = req.file;
-  const workbook = xlsx.read(buffer, { type: 'buffer' });
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const records = xlsx.utils.sheet_to_json(sheet);
-
-  const db = await cds.connect.to('db'); // connect to CAP DB
-  const { EmployeeTime } = db.entities;
-
-  const result = [];
-
-  for (const record of records) {
-    try {
-      await INSERT.into(EmployeeTime).entries(record);
-      result.push({ externalCode: record.externalCode || '', status: 'Success', error: '' });
-    } catch (e) {
-      result.push({ externalCode: record.externalCode || '', status: 'Failed', error: e.message });
-    }
-  }
-
-  res.status(200).json(result);
-} catch (err) {
-  res.status(500).json({ error: 'Upload failed', details: err.message });
-}
-  });
+  
   
 });
