@@ -28,7 +28,8 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "watch-calendar": "cds watch --open calendar/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-calendar": "cds watch --open calendar/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-calendarui": "cds watch --open calendarui/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "globals": {
     "SELECT": true,
