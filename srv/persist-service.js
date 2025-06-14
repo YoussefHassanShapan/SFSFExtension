@@ -6,7 +6,6 @@ module.exports = cds.service.impl(async function () {
   const { EmployeeTime } = this.entities;
 
   this.on('addEmployeeTime', async (req) => {
-    console.log("iam herer ..............");
     return await INSERT.into(EmployeeTime).entries(req.data);
   });
   
@@ -18,11 +17,8 @@ module.exports = cds.service.impl(async function () {
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const records = xlsx.utils.sheet_to_json(sheet);
     
-        console.log("Parsed records:", records); // ✅ See what's being uploaded
-    debugger
      var x =   await cds.tx(req).run(INSERT.into(EmployeeTime).entries(records));
     
-        // Debug: Fetch all after insert
         const inserted = await cds.tx(req).run(SELECT.from(EmployeeTime));
         console.log("Inserted records:", inserted);
     
