@@ -37,7 +37,7 @@ sap.ui.define([
                     if (!peopleMap[userId]) {
                         peopleMap[userId] = {
                             name: userId,
-                            role: entry.timeType || "",
+                            role: "Role Not Specified Yet",
                             pic: "sap-icon://employee",
                             appointments: []
                         };
