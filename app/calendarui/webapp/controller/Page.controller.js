@@ -44,12 +44,16 @@ sap.ui.define([
                     }
 
                     if (entry.startDate && entry.endDate) {
+                        const endDate = new Date(entry.endDate);
+                        const now = new Date();
+                        const isExpired = endDate < now;
+
                         peopleMap[userId].appointments.push({
                             start: new Date(entry.startDate),
                             end: new Date(entry.endDate),
                             title: entry.timeType || "No Title",
                             info: entry.comment || entry.approvalStatus || "",
-                            type: "Type01",
+                            type: isExpired ? "Type02":"Type07",
                             tentative: false
                         });
                     }
