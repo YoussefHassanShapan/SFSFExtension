@@ -10,12 +10,9 @@ action uploadExcel(
 ) returns array of EmployeeTime;
   
   action addEmployeeTime(
-    externalCode: String,
     userId: String,
     timeType: String,
     approvalStatus: String,
-    quantityInHours: Decimal(9,2),
-    quantityInDays: Decimal(9,2),
     startDate: Date,
     endDate: Date,
   ) returns EmployeeTime;
