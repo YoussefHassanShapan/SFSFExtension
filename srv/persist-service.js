@@ -1,7 +1,9 @@
 const cds = require('@sap/cds');
 const xlsx = require('xlsx');
 const { randomBytes } = require('crypto'); 
-
+function toISODate(date) {
+  return date.toISOString().split('T')[0];
+}
 module.exports = cds.service.impl(async function () {
 const { EmployeeTime } = this.entities;
 
@@ -18,7 +20,6 @@ const { EmployeeTime } = this.entities;
       endDate
     } = req.data;
   
-    // === Validation ===
     if (!startDate || !endDate) {
       return req.error(400, 'Both startDate and endDate are required.');
     }
@@ -34,33 +35,31 @@ const { EmployeeTime } = this.entities;
       return req.error(400, 'endDate cannot be before startDate.');
     }
   
-    // Generate externalCode before checking it
     const externalCode = randomBytes(16).toString('hex');
-  
-    const exists = await SELECT.one.from(EmployeeTime).where({ externalCode });
-    if (exists) {
-      return req.error(400, `An entry with externalCode "${externalCode}" already exists.`);
-    }
-  
-    const millisecondsPerDay = 1000 * 60 * 60 * 24;
-    const days = Math.floor((end - start) / millisecondsPerDay) + 1;
+    const days = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
     const hours = days * 8;
   
-    const result = await INSERT.into(EmployeeTime).entries({
+    const entry = {
       externalCode,
       userId,
       timeType,
       approvalStatus,
-      startDate,
-      endDate,
+      startDate: toISODate(start),
+      endDate: toISODate(end),
       quantityInDays: days,
-      quantityInHours: hours,
-      createdDateTime: new Date().toISOString(),
-      lastModifiedDateTime: new Date().toISOString()
-    });
+      quantityInHours: hours
+
+    };
   
-    return result;
+    try {
+      const result = await INSERT.into(EmployeeTime).entries(entry);
+      return result;
+    } catch (err) {
+      console.error('Insert failed:', err.message);
+      return req.error(500, 'Failed to insert entry.');
+    }
   });
+  
   
   this.on('uploadExcel', async (req) => {
     try {

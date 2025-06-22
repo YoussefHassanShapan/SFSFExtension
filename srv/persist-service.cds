@@ -18,10 +18,10 @@ action uploadExcel(
   ) returns EmployeeTime;
 }
 
-@protocol: 'rest'
-service CatalogServiceRest {
-  entity PerPersonal as projection on CatalogService.PerPersonal;
-  entity TimeType as projection on CatalogService.TimeType;
-  entity TimeAccount as projection on CatalogService.TimeAccount;
-  entity EmployeeTime as projection on CatalogService.EmployeeTime;
-}
+// @protocol: 'rest'
+// service CatalogServiceRest {
+//   entity PerPersonal as projection on CatalogService.PerPersonal;
+//   entity TimeType as projection on CatalogService.TimeType;
+//   entity TimeAccount as projection on CatalogService.TimeAccount;
+//   entity EmployeeTime as projection on CatalogService.EmployeeTime;
+// }

@@ -10,10 +10,10 @@ cds.on('bootstrap', app => {
     })
 })
 
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config()
-    const cds_swagger = require('cds-swagger-ui-express')
-    cds.on('bootstrap', app => app.use(cds_swagger()))
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     require('dotenv').config()
+//     const cds_swagger = require('cds-swagger-ui-express')
+//     cds.on('bootstrap', app => app.use(cds_swagger()))
+// }
 
 module.exports = cds.server
